@@ -140,10 +140,10 @@ for name, num in tokens_appearance.items():
 tokens_stat_df = pl.from_records(tokens_stat)
 tokens_stat_df.write_csv('lud_tokens_stat.csv', float_scientific=False)
 
-# tokens_df = pd.DataFrame.from_records(tokens_records)
-# tokens_df.to_csv('lud_tokens.csv', index=False)
+tokens_df = pd.DataFrame.from_records(tokens_records)
+tokens_df.to_csv('lud_tokens.csv', index=False)
 
-# with open('ludii_tokens.dic', 'w', encoding='utf8') as out:
-#     for token in tokens_records:
-#         line = token['token']+'\n'
-#         out.writelines(line)
+with open('ludii_tokens.dic', 'w', encoding='utf8') as out:
+    for token in tokens_records:
+        line = token['token']+'\n'
+        out.writelines(line)
