@@ -102,6 +102,8 @@ tokens_set |= set(names)
 tokens_set |= set(('(', ')', '{', '}'))
 
 id = 1
+tokens_appearance = {}
+
 for token in tokens_set:
     if any((
         len(token) == 0,
@@ -112,12 +114,36 @@ for token in tokens_set:
         {'token': token,
          'code': id}
     )
+    tokens_appearance[token] = 0
     id += 1
 
-tokens_df = pd.DataFrame.from_records(tokens_records)
-tokens_df.to_csv('lud_tokens.csv', index=False)
+for rule in rules_set.values():
+    rule = rule.replace('\n', ' ')
+    tokens = re.split(SPLIT_RE, rule)
+    for token in tokens:
+        if any((
+            str(token).isnumeric(),
+            token == ''
+        )):
+            continue
+        counter = tokens_appearance.setdefault(token, 0)
+        tokens_appearance[token] = counter + 1
 
-with open('ludii_tokens.dic', 'w', encoding='utf8') as out:
-    for token in tokens_records:
-        line = token['token']+'\n'
-        out.writelines(line)
+print(tokens_appearance)
+
+tokens_stat = []
+for name, num in tokens_appearance.items():
+    entry = {'token': name,
+             'amount': num}
+    tokens_stat.append(entry)
+
+tokens_stat_df = pl.from_records(tokens_stat)
+tokens_stat_df.write_csv('lud_tokens_stat.csv', float_scientific=False)
+
+# tokens_df = pd.DataFrame.from_records(tokens_records)
+# tokens_df.to_csv('lud_tokens.csv', index=False)
+
+# with open('ludii_tokens.dic', 'w', encoding='utf8') as out:
+#     for token in tokens_records:
+#         line = token['token']+'\n'
+#         out.writelines(line)
